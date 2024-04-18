@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<!-- Header -->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Personal Branding...</h1>
+            <p class="lead fw-normal text-white-50 mb-0">DERRICK CUSTOM DESIGNS (DCD): Empower Your Style with Personal Branding</p>
+            <a href="{% url 'home' %}" class="btn btn-outline-light mt-3">Discover more items</a>
+        </div>
+    </div>
+</header>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <br/><br/>
+        
+            <p class="lead fw-normal text-dark mb-4" style="text-align: justify; color: #444; font-size: 18px;">
+                Elevate your style with DCD! Personal branding is an art – a way to express your identity. Whether you're an individual showcasing your uniqueness or a business making a lasting impression, DCD is your canvas for exclusive clothing designs that resonate with your essence.
+            </p>
+            <div class="lead fw-normal text-primary mb-4" style="text-align: center; color: #e44d26; font-size: 24px;">
+                Unveiling the Process:
+            </div>
+            <ul class="lead fw-normal text-dark mb-4" style="text-align: justify; list-style-type: none; margin-left: 0; font-size: 18px;">
+                <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: #e44d26; border-radius: 50%; position: absolute; left: -20px; top: 5px;"></span>
+                    Choose from our curated collection of clothing items.
+                </li>
+                <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: #e44d26; border-radius: 50%; position: absolute; left: -20px; top: 5px;"></span>
+                    Select the quantity – single piece or bulk order, we've got you covered.
+                </li>
+                <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: #e44d26; border-radius: 50%; position: absolute; left: -20px; top: 5px;"></span>
+                    Personalize with your logo, slogan, or any design that defines your brand.
+                </li>
+                <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: #e44d26; border-radius: 50%; position: absolute; left: -20px; top: 5px;"></span>
+                    Submit your request, and our skilled team will breathe life into your vision.
+                </li>
+            </ul>
+            <br/><br/>
+        </div>
+        <br><br><br><br>
+
+        <div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+            <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT A PRODUCT</p>
+        </div>
+
+
+  
+<style>
+    .card {
+        border: 1px solid #ccc; /* Add border */
+        border-radius: 10px; /* Add border radius */
+    }
+
+    .card-body {
+        padding: 1.5rem; /* Add padding */
+    }
+
+    .card-title {
+        margin-bottom: 1.25rem; /* Add margin below the title */
+        font-size: 1.25rem; /* Increase font size of the title */
+        font-weight: bold; /* Make title bold */
+        color: #333; /* Change title color */
+    }
+
+    .form-check-label {
+        font-size: 1rem; /* Adjust font size of the label */
+    }
+
+    .form-check-input {
+        margin-right: 0.5rem; /* Add margin between checkbox and label */
+    }
+</style>
+
+
+
+<div class="container-fluid px-4 px-lg-5 mt-5">
+    <div class="row">
+        <!-- Filters section -->
+        <div class="col-lg-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Filters</h5>
+                    <!-- Category filters -->
+                    
+                    <div class="form-check" >
+                        {% for category in categories %}
+                        <input class="form-check-input category-checkbox" type="checkbox" id="category-{{ category.id }}" value="{{ category.id }}">
+                        <label class="form-check-label" for="category-{{ category.id }}">
+                            {{ category.name }}
+                        </label><br>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Products section -->
+        <div class="col-lg-9">
+            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center" id="product-container">
+                {% for product in unique_products %}
+                <div class="col mb-5 category-product" data-category="{{ product.category.id }}">
+                    <div class="card h-100">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">{{ product.name }}</h5>
+                                <!-- Product price-->
+                                {% if product.is_sale %}
+                                <strike>${{ product.price }}</strike>
+                                &nbsp;${{ product.sale_price }}
+                                {% else %}
+                                ${{ product.price }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center">
+                                <a class="btn btn-outline-dark mt-auto" href="{% url 'personal1' product.id %}">Select_Product</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript for handling category filters
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const selectedCategories = [];
+                checkboxes.forEach(function(checkbox) {
+                    if (checkbox.checked) {
+                        selectedCategories.push(checkbox.value);
+                    }
+                });
+                const products = document.querySelectorAll('.category-product');
+                products.forEach(function(product) {
+                    const category = product.getAttribute('data-category');
+                    if (selectedCategories.length === 0 || selectedCategories.includes(category)) {
+                        product.style.display = 'block';
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  
+<style>
+    .card {
+        border: 1px solid #ccc; /* Add border */
+        border-radius: 10px; /* Add border radius */
+    }
+
+    .card-body {
+        padding: 1.5rem; /* Add padding */
+    }
+
+    .card-title {
+        margin-bottom: 1.25rem; /* Add margin below the title */
+        font-size: 1.25rem; /* Increase font size of the title */
+        font-weight: bold; /* Make title bold */
+        color: #333; /* Change title color */
+    }
+
+    .form-check-label {
+        font-size: 1rem; /* Adjust font size of the label */
+    }
+
+    .form-check-input {
+        margin-right: 0.5rem; /* Add margin between checkbox and label */
+    }
+</style>
+
+
+
+<div class="container-fluid px-4 px-lg-5 mt-5">
+    <div class="row">
+        <!-- Filters section -->
+        <div class="col-lg-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Filters</h5>
+                    <!-- Category filters -->
+                    
+                    <div class="form-check" >
+                        {% for category in categories %}
+                        <input class="form-check-input category-checkbox" type="checkbox" id="category-{{ category.id }}" value="{{ category.id }}">
+                        <label class="form-check-label" for="category-{{ category.id }}">
+                            {{ category.name }}
+                        </label><br>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Products section -->
+        <div class="col-lg-9">
+            <div class="row row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center" id="product-container">
+                {% for product in unique_products %}
+                <div class="col mb-5 category-product" data-category="{{ product.category.id }}">
+                    <div class="card h-100">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">{{ product.name }}</h5>
+                                <!-- Product price-->
+                                {% if product.is_sale %}
+                                <strike>${{ product.price }}</strike>
+                                &nbsp;${{ product.sale_price }}
+                                {% else %}
+                                ${{ product.price }}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        
+                        <!-- Product actions-->
+                        
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <select class="form-select form-select-sm" id="qty-cart">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                              </select>
+                            <div class="text-center">
+
+                                
+                                <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">View Product</a>
+
+                                
+                                <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Add To Cart</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+                <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT KITCHEN APPLIANCES THAT NEED CLEANING</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+    <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT OVEN TYPE</p>
+</div>
+<div class="container px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-5 justify-content-center">
+        {% for product in unique_products %}
+            {% if product.category.name == 'Appliances' %}
+                {% if product.is_sale %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <!-- Sale -->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <!-- Product price-->
+                                    <strike>${{ product.price }}</strike>
+                                    &nbsp;${{ product.sale_price }}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">View Product</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <!-- Product price-->
+                                    ${{ product.price }}
+                                    <br>
+                                    {{ product.size }}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">View Product</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+    <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT Fridge</p>
+</div>
+
+
+<div class="col-lg-9">
+    <div class="row justify-content-center" id="product-container">
+        {% for product in unique_products %}
+        {% if product.category.name == 'fridge' %}
+        {% if product.size != '-' %}
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-5 category-product" data-category="{{ product.category.id }}">
+            <div class="card h-100">
+                <!-- Product image-->
+                <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                <!-- Product details-->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <!-- Product name-->
+                        <h5 class="fw-bolder">{{ product.name }}</h5>
+
+                        <!-- Other products with the same size code -->
+                        <h6>Select Variation:</h6>
+                        <select name="size" id="size">
+                            {% for other_product in other_products %}
+                            <option value="{{ other_product.size }}" data-product-id="{{ other_product.id }}">{{ other_product.size }}</option>
+                            {% endfor %}
+                            <!-- Include the size of product.id as an option -->
+                            <option value="{{ product.size }}" data-product-id="{{ product.id }}">{{ product.size }}</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Product price-->
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    {% if product.is_sale %}
+                    <strike>${{ product.price }}</strike>
+                    &nbsp;${{ product.sale_price }}
+                    {% else %}
+                    ${{ product.price }}
+                    {% endif %}
+                    <div class="text-center">
+                        <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">View Product</a>
+                        <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Add To Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+    <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">House Condition</p>
+</div>
+
+
+<div class="col-lg-9">
+    <div class="row justify-content-center" id="product-container">
+        {% for product in unique_products %}
+            {% if product.category.name == 'House Condition' %}
+                {% if product.size != '-' %}
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-5 category-product" data-category="{{ product.category.id }}">
+            <div class="card h-100">
+                <!-- Product image-->
+                <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
+                <!-- Product details-->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <!-- Product name-->
+                        <h5 class="fw-bolder">{{ product.name }}</h5>
+                        
+                    </div>
+                </div>
+                <!-- Product price-->
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    {% if product.is_sale %}
+                    <strike>${{ product.price }}</strike>
+                    &nbsp;${{ product.sale_price }}
+                    {% else %}
+                    ${{ product.price }}
+                   {% endif %}
+
+                </div>
+                <h6>Select Variation:</h6>
+                        <select name="size" id="size">
+                            {% for other_product in other_products %}
+                            <option value="{{ other_product.size }}" data-product-id="{{ other_product.id }}">{{ other_product.size }}</option>
+                            {% endfor %}
+                            <!-- Include the size of product.id as an option -->
+                            <option value="{{ product.size }}" data-product-id="{{ product.id }}">{{ product.size }}</option>
+                        </select>
+                
+                <div class="text-center">
+                    <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">View Product</a>
+                    <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Add To Cart</button>
+                </div>
+                
+            </div>
+        </div>
+            {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+
+
+<a href="{% url 'cart_summary' %}" class="btn btn-outline-dark"><i class="bi-cart-fill me-1"></i>NEXT <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_quantity">{{ cart|length }}</span></a>
+
+
+
+<script>
+    // JavaScript for handling category filters
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.category-checkbox');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const selectedCategories = [];
+                checkboxes.forEach(function(checkbox) {
+                    if (checkbox.checked) {
+                        selectedCategories.push(checkbox.value);
+                    }
+                });
+                const products = document.querySelectorAll('.category-product');
+                products.forEach(function(product) {
+                    const category = product.getAttribute('data-category');
+                    if (selectedCategories.length === 0 || selectedCategories.includes(category)) {
+                        product.style.display = 'block';
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+<script>
+    // Check if button pressed
+    $(document).on('click', '#add-cart', function(e){
+        e.preventDefault();
+        var productId = $(this).val(); // Retrieve product ID from button value
+        var quantity = $('#qty-cart').val(); // Retrieve selected quantity
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+                product_id: productId, // Include product ID in data
+                product_qty: quantity,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function(json){
+                //console.log(json)
+                document.getElementById("cart_quantity").textContent = json.qty
+                location.reload();
+            },
+            error: function(xhr, errmsg, err){
+                // Handle errors
+            }
+        });
+    });
+</script>
+
+{% endblock %}

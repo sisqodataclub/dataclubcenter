@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .invoice {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            margin: 0;
+        }
+        .header p {
+            margin: 0;
+            text-align: right;
+        }
+        .customer-info {
+            margin-bottom: 20px;
+        }
+        .table {
+            width: 100%; /* Set table width to 100% */
+            border-collapse: collapse;
+            white-space: nowrap; /* Prevent line breaks */
+        }
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <div class="header">
+            <h2>Booking Confirmation</h2>
+        </div>
+        
+        <p>Dear {{ customer.first_name }},</p>
+        <p>Thank you for your order!</p>
+        <p>Here are the details of your order:</p>
+        <div class="customer-info">
+            <ul>
+                <li>First Name: {{ customer.first_name }}</li>
+                <li>Email: {{ customer.email }}</li>
+                <li>Contact Number: {{ customer.phone }}</li>
+                <li>Address: {{ customer.address }}</li>
+                <li>Postcode: {{ customer.postcode }}</li>
+                <li>City: {{ customer.city }}</li>
+                <li>Country: {{ customer.country }}</li>
+                <li>Payment Method: {{ customer.paymentM }}</li>
+                <li>Selected Date: {{ customer.selected_date }}</li>
+                <!-- Add more customer details here -->
+            </ul>
+        </div>
+        <p>Booking Details</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in cart_products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>
+                        <select id="select{{product.id}}">
+                            {% for key, value in quantities.items %}
+                            {% if key == product.id|slugify %}
+                            <option selected>{{ value }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        {% if product.is_sale %}
+                        <strike>${{ product.price }}</strike> ${{ product.sale_price }}
+                        {% else %}
+                        ${{ product.price }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="total">
+            <h3>Total: ${{ totals }}</h3>
+        </div>
+        <p>All enquiries at clean@ddeepcleaningservices.com</p>
+        <p>Terms and conditions </p>
+        <p>Thank you!</p>
+    </div>
+</body>
+</html>

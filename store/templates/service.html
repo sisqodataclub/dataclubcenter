@@ -1,0 +1,892 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="grid-container">
+        <header class="header">
+            <!-- Header content -->
+            <div class="header-content">
+                <h1 class="header-title">DDEEP CLEANING SERVICES BOOKING FORMS</h1>
+                <p class="header-subtitle">Select areas of the house that need cleaning...</p>
+                <a href="{% url 'allproducts' %}" class="btn btn-outline-light mt-3">View all products</a>
+            </div>
+        </header>
+
+        <div class="sidebar-show">
+            <button id="sidebar-show-toggle" class="btn btn-outline-dark">
+                <i class="bi bi-cart-fill me-1"></i> <!-- Use the appropriate icon class for the cart -->
+                Show/Hide Cart
+            </button>
+        </div>
+
+        <div class="sidebar fixed-sidebar">
+            <div class="sidebar-header">
+                <h4>Cart</h4>
+                <button id="sidebar-toggle" class="uncollapse">HIDE
+                    <i class="fa fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            {% for product in cart_products %}
+            <div class="cart-item-container">
+                <div class="cart-item">
+                    <img src="{{ product.image.url }}" alt="Product Image">
+                    <div class="cart-item-details">
+                        <h5>{{ product.name }}</h5>
+                        {% if product.is_sale %}
+                        <strike>${{ product.price }}</strike>
+                        ${{ product.sale_price }}
+                        {% else %}
+                        ${{ product.price }}
+                        {% endif %}
+                        <div class="col-md-2">Quantity:</div>
+                        <div class="col-md-2">
+                            <select id="select{{product.id}}">
+                                {% for key, value in quantities.items %}
+                                {% if key == product.id|slugify %}
+                                <option selected>{{ value }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" data-index="{{product.id}}" class="btn btn-danger delete-product">X</button>
+            </div>
+            {% endfor %}
+            <h3>Total: ${{ totals }}</h3>
+        </div>
+        
+        
+
+        <div class="main-content">
+            <div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+                <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT AREAS OF THE HOUSE THAT NEEDS CLEANING</p>
+            </div>
+            <div class="container-fluid px-2 px-lg-4 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'property_details' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            
+            <div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+                <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT APPLIANCES THAT NEED CLEANING</p>
+            </div>
+            <h3>SELECT FRIDGE</h3>
+            <br>
+            
+            <div class="container-fluid px-4 px-lg-5 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'fridge' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <h3>SELECT OVEN/MICROWAVE</h3>
+            
+            <div class="container-fluid px-4 px-lg-5 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'oven' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <h3>SELECT WASHINE MACHINE/DISH WASHER</h3>
+
+            <div class="container-fluid px-4 px-lg-5 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'wash' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <h3>SELECT HOB</h3>
+
+            <div class="container-fluid px-4 px-lg-5 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'hob' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            
+            <div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+                <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT CARPETS THAT NEEDS CLEANING</p>
+            </div>
+            <div class="container-fluid px-2 px-lg-4 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'carpets' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            
+            <div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+                <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT CARPETS THAT NEEDS CLEANING</p>
+            </div>
+            <div class="container-fluid px-2 px-lg-4 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'carpets' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="text-center" style="background-color: #ec2828; border: 1px solid #ccc; padding: 10px;">
+                <p class="lead fw-normal mb-0" style="font-size: 1.25rem; font-weight: normal; color: rgb(246, 247, 246);">SELECT SOFA'S THAT NEEDS CLEANING</p>
+            </div>
+            <div class="container-fluid px-2 px-lg-4 mt-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5"> <!-- Adjust number of columns based on screen size -->
+                    <!-- Products section -->
+                    {% for product in unique_products %}
+                        {% if product.category.name == 'sofa' %}
+                            <div class="col">
+                                <div class="card h-100">
+                                    <!-- Sale badge-->
+                                    {% if product.is_sale %}
+                                        <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                                    {% endif %}
+                                    <!-- Product image-->
+                                    <img class="card-img-top" src="{{ product.image.url }}" alt="Product Image" style="max-width: 100px; max-height: 100px" />
+                                    <!-- Product details-->
+                                    <div class="card-body p-4">
+                                        <div class="text-center">
+                                            <!-- Product name-->
+                                            <h5 class="fw-bolder">{{ product.name }}</h5>
+                                            <!-- Sale -->
+                                            {% if product.is_sale %}
+                                                <div class="d-flex justify-content-center small text-warning mb-2">
+                                                    <div class="bi-star-fill"></div>
+                                                    &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                                    <div class="bi-star-fill"></div>
+                                                </div>
+                                                <!-- Product price-->
+                                                <strike>${{ product.price }}</strike>
+                                                &nbsp;${{ product.sale_price }}
+                                            {% else %}
+                                                <!-- Product price-->
+                                                ${{ product.price }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <!-- Product actions-->
+                                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent" >
+                                        <div class="text-center">
+                                            <!-- Select quantity -->
+                                            <select class="form-select form-select-sm" id="qty-cart" >
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <br>
+                                            
+                                            <!-- View product button -->
+                                            <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}" style="max-width: 100px; max-height: 40px; font-size: 10px;">View Details</a>
+                                            <!-- Add to cart button -->
+                                            <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart" style="max-width: 100px; max-height: 40px; font-size: 10px;">Add To Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <a href="{% url 'cart_summary' %}" class="btn btn-outline-dark"><i class="bi-cart-fill me-1"></i>NEXT <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_quantity">{{ cart|length }}</span></a>
+            
+        </div>
+    </div>
+    <script>
+        // JavaScript for handling category filters
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.category-checkbox');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const selectedCategories = [];
+                    checkboxes.forEach(function(checkbox) {
+                        if (checkbox.checked) {
+                            selectedCategories.push(checkbox.value);
+                        }
+                    });
+                    const products = document.querySelectorAll('.category-product');
+                    products.forEach(function(product) {
+                        const category = product.getAttribute('data-category');
+                        if (selectedCategories.length === 0 || selectedCategories.includes(category)) {
+                            product.style.display = 'block';
+                        } else {
+                            product.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    
+    <script>
+        // Check if button pressed
+        $(document).on('click', '#add-cart', function(e){
+            e.preventDefault();
+            var productId = $(this).val(); // Retrieve product ID from button value
+            var quantity = $(this).closest('.card-footer').find('#qty-cart').val(); // Retrieve selected quantity
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'cart_add' %}',
+                data: {
+                    product_id: productId, // Include product ID in data
+                    product_qty: quantity,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+                success: function(json){
+                    //console.log(json)
+                    document.getElementById("cart_quantity").textContent = json.qty
+                    location.reload();
+                },
+                error: function(xhr, errmsg, err){
+                    // Handle errors
+                }
+            });
+        });
+    </script>
+
+<script>
+    // Update Cart
+    $(document).on('click', '.update-cart', function(e){
+        e.preventDefault();
+        // grab the product id
+        var productid = $(this).data('index');
+    
+        $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_update' %}',
+        data: {
+          product_id: $(this).data('index'),
+          product_qty: $('#select' + productid + ' option:selected').text(),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'post'
+        },
+        success: function(json){
+            //console.log(json)
+            //document.getElementById("cart_quantity").textContent = json.qty
+            location.reload();
+        },
+    
+        error: function(xhr, errmsg, err){
+    
+        }
+    
+    
+        });
+    
+    })
+    
+    // Delete Item From Cart
+    $(document).on('click', '.delete-product', function(e){
+        e.preventDefault();
+        // grab the product id
+        //var productid = $(this).data('index');
+    
+        $.ajax({
+        type: 'POST',
+        url: '{% url 'cart_delete' %}',
+        data: {
+          product_id: $(this).data('index'),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'post'
+        },
+        success: function(json){
+            //console.log(json)
+            //document.getElementById("cart_quantity").textContent = json.qty
+            location.reload();
+        },
+    
+        error: function(xhr, errmsg, err){
+    
+        }
+    
+    
+        });
+    
+    })
+
+    document.getElementById("sidebar-toggle").addEventListener("click", function() {
+        var sidebar = document.querySelector(".sidebar");
+        sidebar.classList.toggle("collapsed");
+        var sidebarHeader = document.querySelector(".sidebar-header");
+        if (sidebar.classList.contains("collapsed")) {
+            sidebarHeader.classList.add("collapsed");
+            this.textContent = "Show";
+            this.querySelector("i").classList.remove("fa-chevron-left");
+            this.querySelector("i").classList.add("fa-chevron-right");
+        } else {
+            sidebarHeader.classList.remove("collapsed");
+            this.querySelector("i").classList.remove("fa-chevron-right");
+            this.querySelector("i").classList.add("fa-chevron-left");
+        }
+    });
+
+
+    document.getElementById("sidebar-show-toggle").addEventListener("click", function() {
+        var sidebar = document.querySelector(".sidebar");
+        sidebar.classList.toggle("collapsed");
+    });
+
+
+
+    
+
+
+    </script>
+
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 400px; /* Adjust sidebar width as needed */
+            grid-template-rows: auto 1fr; /* Header takes auto height, main content takes remaining height */
+            gap: 20px; /* Adjust gap between grid areas */
+            margin: 20px; /* Add margin around the grid */
+        }
+
+        .header {
+            grid-column: 1 / span 2; /* Header spans across both columns */
+            background-color: #333; /* Background color for the header */
+            color: #fff; /* Text color for the header */
+            padding: 20px; /* Add padding */
+        }
+
+        .header-content {
+            text-align: center; /* Center align header content */
+        }
+
+        .header-title {
+            font-size: 2.5rem; /* Adjust font size for the title */
+            margin-bottom: 10px; /* Add margin bottom */
+        }
+
+        .header-subtitle {
+            font-size: 1.25rem; /* Adjust font size for the subtitle */
+            margin-bottom: 20px; /* Add margin bottom */
+        }
+
+        .sidebar {
+            grid-row: 2 / span 1;
+            grid-column: 2 / span 1;
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+            transition: width 0.3s ease;
+            max-height: calc(100vh - 50px); /* Adjust the height to leave space for the header and footer */
+        }
+
+        .fixed-sidebar {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 250px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(60vh - 50px); /* Adjust the height to leave space for the header and footer */
+        }
+
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #sidebar-toggle {
+            background: none;
+            border: none;
+            color: #000;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header.collapsed button.uncollapse {
+            display: none;
+        }
+
+
+        .sidebar-show {
+            position: fixed;
+            bottom: 0%;
+            right: 20%;
+            transform: translateY(-50%);
+            z-index: 9999; /* Ensure it's above other content */
+        }
+
+        .sidebar-show button {
+            background: none;
+            border: none;
+            color: #000;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+
+
+
+
+        .cart-item-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px; /* Add margin bottom between items */
+        }
+
+        .cart-item img {
+            width: 50px; /* Adjust image width */
+            height: 50px; /* Adjust image height */
+            margin-right: 10px; /* Add margin between image and text */
+        }
+
+        .cart-item-details h5 {
+            margin: 0;
+            font-size: 16px; /* Adjust font size for item name */
+        }
+
+        .main-content {
+            grid-row: 3 / span 1; /* Main content spans 1 row */
+            grid-column: 1 / span 1; /* Main content spans 1 column */
+        }
+
+        /* Apply media queries for responsiveness */
+        @media (min-width: auto) {
+            .grid-container {
+                grid-template-columns: 1fr auto; /* Adjust sidebar width as needed */
+            }
+
+            .main-content {
+                grid-column: 2 / span 1; /* Span 1 column starting from second column */
+            }
+        }
+
+        /* Add additional styling for header, sidebar, and main content as needed */
+    </style>
+
+
+    
+    <style>
+        .card {
+            border: 1px solid #ccc; /* Add border */
+            border-radius: 10px; /* Add border radius */
+        }
+
+        .card-body {
+            padding: 1.5rem; /* Add padding */
+        }
+
+        .card-title {
+            margin-bottom: 1.25rem; /* Add margin below the title */
+            font-size: 1.25rem; /* Increase font size of the title */
+            font-weight: bold; /* Make title bold */
+            color: #333; /* Change title color */
+        }
+
+        .form-check-label {
+            font-size: 1rem; /* Adjust font size of the label */
+        }
+
+        .form-check-input {
+            margin-right: 0.5rem; /* Add margin between checkbox and label */
+        }
+    </style>
+
+{% endblock %}
+
+
+
+
+

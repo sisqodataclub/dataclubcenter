@@ -1,0 +1,8 @@
+{% load static %}
+
+<label for="{{ widget.attrs.id }}_{{ option.value }}">
+    <input type="radio" name="{{ widget.name }}" id="{{ widget.attrs.id }}_{{ option.value }}"
+           value="{{ option.value }}" {% if widget.value = option.value %}checked{% endif %}>
+    {{ option.label }}
+    <img src="{% static option.icon %}" alt="{{ option.label }}" width="20" height="20">
+</label>
